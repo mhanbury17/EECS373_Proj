@@ -136,6 +136,7 @@ int main(void)
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    int changedBrightness = 0;
     while (1)
     {
         /* ======================================= Loop ======================================== */
@@ -222,6 +223,7 @@ int main(void)
                 {
                     ILI9341_SetBrightness(ILI9341_GetBrightness() + 1);
                     ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 1);
+                    changedBrightness = 1;
                 }
                 __enable_irq();
             }
@@ -233,6 +235,7 @@ int main(void)
                 {
                     ILI9341_SetBrightness(ILI9341_GetBrightness() - 1);
                     ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 0);
+                    changedBrightness = 1;
                 }
                 __enable_irq();
             }
@@ -241,7 +244,11 @@ int main(void)
                 __disable_irq();
                 curScreen = HOMESCREEN;
                 STMPE610_ClearPoint(&point);
-                ILI9341_UpdateColor();
+                if (changedBrightness)
+                {
+                    ILI9341_UpdateColor();
+                    changedBrightness = 0;
+                }
                 ILI9341_SetupUserInterface();
                 ILI9341_ResetTextBox(&cur);
                 __enable_irq();
