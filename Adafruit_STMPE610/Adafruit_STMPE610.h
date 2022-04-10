@@ -20,20 +20,20 @@
 /* ------------------------------ Register Address and Data Set ------------------------------- */
 #define STMPE610_ADDR 0x82
 
-#define STMPE610_SYS_CTRL1 0x03                                                                     /* Reset Control */
+#define STMPE610_SYS_CTRL1 0x03                                                                     // Reset Control
 #define STMPE610_SYS_CTRL1_RESET 0x02
 #define STMPE610_SYS_CTRL1_CLEAR 0x00
 
-#define STMPE610_CHIP_ID 0x00                                                                       /* Clock Contrl */
+#define STMPE610_CHIP_ID 0x00                                                                       // Clock Control
 #define STMPE610_SYS_CTRL2 0x04
 #define STMPE610_SYS_CTRL2_EN_CLKS 0x08
 
-#define STMPE610_TSC_CTRL 0x40                                                                      /* Touchscreen controller setup */
+#define STMPE610_TSC_CTRL 0x40                                                                      // Touchscreen controller setup
 #define STMPE610_TSC_CTRL_EN 0x01
 #define STMPE610_TSC_CTRL_XYZ 0x00
 #define STMPE610_TSC_CTRL_XY 0x02
 
-#define STMPE610_INT_CTRL 0x09                                                                      /* Interrupt control */
+#define STMPE610_INT_CTRL 0x09                                                                      // Interrupt control 
 #define STMPE610_INT_CTRL_POL_HIGH 0x04
 #define STMPE610_INT_CTRL_POL_LOW 0x00
 #define STMPE610_INT_CTRL_EDGE 0x02
@@ -41,7 +41,7 @@
 #define STMPE610_INT_CTRL_ENABLE 0x01
 #define STMPE610_INT_CTRL_DISABLE 0x00
 
-#define STMPE610_INT_EN 0x0A                                                                        /* Interrupt enable */
+#define STMPE610_INT_EN 0x0A                                                                        // Interrupt enable 
 #define STMPE610_INT_EN_TOUCHDET 0x01
 #define STMPE610_INT_EN_FIFOTH 0x02
 #define STMPE610_INT_EN_FIFOOF 0x04
@@ -50,19 +50,19 @@
 #define STMPE610_INT_EN_ADC 0x40
 #define STMPE610_INT_EN_GPIO 0x80
 
-#define STMPE610_INT_STA 0x0B                                                                       /* Interrupt status */
+#define STMPE610_INT_STA 0x0B                                                                       // Interrupt status 
 #define STMPE610_INT_STA_TOUCHDET 0x01
 
-#define STMPE610_ADC_CTRL1 0x20                                                                     /* ADC control */
+#define STMPE610_ADC_CTRL1 0x20                                                                     // ADC control 
 #define STMPE610_ADC_CTRL1_12BIT 0x08
 #define STMPE610_ADC_CTRL1_10BIT 0x00
 
-#define STMPE610_ADC_CTRL2 0x21                                                                     /* ADC control */
+#define STMPE610_ADC_CTRL2 0x21                                                                     // ADC control 
 #define STMPE610_ADC_CTRL2_1_625MHZ 0x00
 #define STMPE610_ADC_CTRL2_3_25MHZ 0x01
 #define STMPE610_ADC_CTRL2_6_5MHZ 0x02
 
-#define STMPE610_TSC_CFG 0x41                                                                       /* Touchscreen controller configuration */
+#define STMPE610_TSC_CFG 0x41                                                                       // Touchscreen controller configuration 
 #define STMPE610_TSC_CFG_1SAMPLE 0x00
 #define STMPE610_TSC_CFG_2SAMPLE 0x40
 #define STMPE610_TSC_CFG_4SAMPLE 0x80
@@ -84,26 +84,26 @@
 #define STMPE610_TSC_CFG_SETTLE_50MS 0x06
 #define STMPE610_TSC_CFG_SETTLE_100MS 0x07
 
-#define STMPE610_FIFO_TH 0x4A                                                                       /* FIFO level to generate interrupt */
+#define STMPE610_FIFO_TH 0x4A                                                                       // FIFO level to generate interrupt 
 
-#define STMPE610_FIFO_SIZE 0x4C                                                                     /* Current filled level of FIFO */
+#define STMPE610_FIFO_SIZE 0x4C                                                                     // Current filled level of FIFO 
 
-#define STMPE610_FIFO_STA 0x4B                                                                      /* Current status of FIFO */
+#define STMPE610_FIFO_STA 0x4B                                                                      // Current status of FIFO 
 #define STMPE610_FIFO_STA_RESET 0x01
 #define STMPE610_FIFO_STA_OFLOW 0x80
 #define STMPE610_FIFO_STA_FULL 0x40
 #define STMPE610_FIFO_STA_EMPTY 0x20
 #define STMPE610_FIFO_STA_THTRIG 0x10
 
-#define STMPE610_TSC_I_DRIVE 0x58                                                                   /* Touchscreen controller drive I */
+#define STMPE610_TSC_I_DRIVE 0x58                                                                   // Touchscreen controller drive I 
 #define STMPE610_TSC_I_DRIVE_20MA 0x00
 #define STMPE610_TSC_I_DRIVE_50MA 0x01
 
-#define STMPE610_TSC_DATA_X 0x4D                                                                    /* Data port for TSC data address */
+#define STMPE610_TSC_DATA_X 0x4D                                                                    // Data port for TSC data address 
 #define STMPE610_TSC_DATA_Y 0x4F
 #define STMPE610_TSC_FRACTION_Z 0x56
 
-#define STMPE610_GPIO_SET_PIN 0x10                                                                  /* GPIO */
+#define STMPE610_GPIO_SET_PIN 0x10                                                                  // GPIO 
 #define STMPE610_GPIO_CLR_PIN 0x11
 #define STMPE610_GPIO_DIR 0x13
 #define STMPE610_GPIO_ALT_FUNCT 0x17
@@ -116,7 +116,8 @@ static const uint8_t STMPE610_InitCMDs[] =
     STMPE610_INT_EN,            STMPE610_INT_EN_TOUCHDET,
     STMPE610_ADC_CTRL1,         (STMPE610_ADC_CTRL1_10BIT | (0x6 << 4)),
     STMPE610_ADC_CTRL2,         STMPE610_ADC_CTRL2_6_5MHZ,
-    STMPE610_TSC_CFG,           (STMPE610_TSC_CFG_4SAMPLE | STMPE610_TSC_CFG_DELAY_1MS | STMPE610_TSC_CFG_SETTLE_5MS),
+    STMPE610_TSC_CFG,           (STMPE610_TSC_CFG_4SAMPLE | STMPE610_TSC_CFG_DELAY_1MS 
+                                    | STMPE610_TSC_CFG_SETTLE_5MS),
     STMPE610_TSC_FRACTION_Z,    0x6,
     STMPE610_FIFO_TH,           1,
     STMPE610_FIFO_STA,          STMPE610_FIFO_STA_RESET,
