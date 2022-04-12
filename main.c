@@ -126,8 +126,8 @@ int main(void)
     screen_enum curScreen = HOMESCREEN;
     STMPE610_ClearPoint(&point);
 
-    uint8_t data[100];                                                                              // rasberry pi read data buffer
-    for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                               // clear buffer
+    uint8_t data[100];                                                                              // read data buffer
+    for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                               // clear data buffer
 
     ILI9341_PrintString(&cur, "Clear this text.");
 
@@ -139,18 +139,36 @@ int main(void)
     int changedBrightness = 0;
     while (1)
     {
-        /* ======================================= Loop ======================================== */
+        /* ======================================= Loop ======================================== */ // loop begin
         switch (curScreen)
         {
         case HOMESCREEN:
-            HAL_UART_Receive(&huart2, &data[0], 100, 1000);                                             // receives data from rasberry pi speech recognition
+            HAL_UART_Receive(&huart2, &data[0], 100, 1000);                                         // receives data from rasberry pi speech recognition
 
-            if (data[0] >= ' ' && data[0] <= 'z')                                                       // checks that string is valid
+            if (data[0] >= ' ' && data[0] <= 'z')                                                   // checks that string is valid
             {
                 __disable_irq();
-                ILI9341_PrintString(&cur, (char*)data);                                                 // prints string
-                for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                       // clear buffer
+                ILI9341_PrintString(&cur, (char*)data);                                             // prints string
+                for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                   // clear buffer
                 __enable_irq();
+            }
+            else if (data[0] == '{')
+            {
+                cursor_t arrow_cur = {ILI9341_WIDTH - ILI9341_ARROW_BASE_WIDTH*ILI9341_GetArrowSize() - 10, 4};
+
+                switch ((int)(data[1]))
+                {
+                case 0: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_E, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 1: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 2: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_N, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 3: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 4: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_W, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 5: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 6: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_S, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                case 7: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+                
+                default: /* do nothing */ break;
+                }
             }
 
             if (STMPE610_TouchedArea(point, 20 + ILI9341_BLOCKM_BASE_WIDTH, 20))
@@ -256,7 +274,7 @@ int main(void)
             break;
 
         }
-    /* ========================================================================================= */
+    /* ========================================================================================= */ // loop end
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
