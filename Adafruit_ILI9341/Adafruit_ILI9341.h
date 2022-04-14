@@ -5,7 +5,7 @@
  * @note    This code is written with intention of using SPI to communicate to the
  *          STM32 L031K6 board and uses the following pinout on the display:
  *
- *          PINOUT  SPI             PORT/PIN
+ *          PINOUT  LABEL           PORT/PIN
  *          --------------------------------
  *          CLK     SPI1_SCLK       PA_5
  *          MISO    SPI1_MISO       PA_6
