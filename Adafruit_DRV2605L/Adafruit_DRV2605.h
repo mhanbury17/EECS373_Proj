@@ -1,7 +1,20 @@
 /*!
  * @file    Adafruit_DRV2605.h
- * @brief   
- * @note    
+ * @brief   Driver code for the Adafruit DRV2605L Haptic Motor Controller breakout board
+ *          as described by its datasheet (https://cdn-shop.adafruit.com/datasheets/DRV2605.pdf)
+ * @note    This code is written with the intention of using I2C to communicate to the
+ *          STM32 L4R5ZI-P board and uses the following pinout.
+ * 
+ *          PINOUT  LABEL           PORT/PIN
+ *          --------------------------------
+ *          SCL     I2C1_SCL        PB_8
+ *          SDA     I2C1_SDA        PB_9
+ *          SCL     I2C2_SCL        PB_10
+ *          SDA     I2C2_SDA        PB_11
+ *          SCL     I2C3_SCL        PA_7
+ *          SDA     I2C3_SDA        PB_4
+ *          SCL     I2C4_SCL        PF_14
+ *          SDA     I2C4_SDA        PF_15
  *
  * @author  Miles Hanbury (mhanbury)
  * @author  Joshua Nye (jnye)
@@ -11,29 +24,31 @@
 #include "stm32l4xx_hal.h"
 
 /* -------------------------------- Adafruit DRV2605 Command Set ------------------------------- */
-#define DRV2605_ADDR                0x5A                                                            // Device I2C address
+#define DRV2605_ADDR                0x5A                                                            // device address
+#define DRV2605_ADDR_W              0xB4                                                            // device address for writing
+#define DRV2605_ADDR_R              0xB5                                                            // device address for reading
 
-#define DRV2605_REG_STATUS          0x00                                                            // Status register
-#define DRV2605_REG_MODE            0x01                                                            // Mode register
-#define DRV2605_MODE_INTTRIG        0x00                                                            // Internal trigger mode
-#define DRV2605_MODE_EXTTRIGEDGE    0x01                                                            // External edge trigger mode
-#define DRV2605_MODE_EXTTRIGLVL     0x02                                                            // External level trigger mode
+#define DRV2605_REG_STATUS          0x00                                                            // status register
+#define DRV2605_REG_MODE            0x01                                                            // mode register
+#define DRV2605_MODE_INTTRIG        0x00                                                            // internal trigger mode
+#define DRV2605_MODE_EXTTRIGEDGE    0x01                                                            // external edge trigger mode
+#define DRV2605_MODE_EXTTRIGLVL     0x02                                                            // external level trigger mode
 #define DRV2605_MODE_PWMANALOG      0x03                                                            // PWM/Analog input mode
-#define DRV2605_MODE_AUDIOVIBE      0x04                                                            // Audio-to-vibe mode
-#define DRV2605_MODE_REALTIME       0x05                                                            // Real-time playback (RTP) mode
-#define DRV2605_MODE_DIAGNOS        0x06                                                            // Diagnostics mode
-#define DRV2605_MODE_AUTOCAL        0x07                                                            // Auto calibration mode
+#define DRV2605_MODE_AUDIOVIBE      0x04                                                            // audio-to-vibe mode
+#define DRV2605_MODE_REALTIME       0x05                                                            // real-time playback (RTP) mode
+#define DRV2605_MODE_DIAGNOS        0x06                                                            // diagnostics mode
+#define DRV2605_MODE_AUTOCAL        0x07                                                            // auto calibration mode
 
-#define DRV2605_REG_RTPIN           0x02                                                            // Real-time playback input register
-#define DRV2605_REG_LIBRARY         0x03                                                            // Waveform library selection register
-#define DRV2605_REG_WAVESEQ1        0x04                                                            // Waveform sequence register 1
-#define DRV2605_REG_WAVESEQ2        0x05                                                            // Waveform sequence register 2
-#define DRV2605_REG_WAVESEQ3        0x06                                                            // Waveform sequence register 3
-#define DRV2605_REG_WAVESEQ4        0x07                                                            // Waveform sequence register 4
-#define DRV2605_REG_WAVESEQ5        0x08                                                            // Waveform sequence register 5
-#define DRV2605_REG_WAVESEQ6        0x09                                                            // Waveform sequence register 6
-#define DRV2605_REG_WAVESEQ7        0x0A                                                            // Waveform sequence register 7
-#define DRV2605_REG_WAVESEQ8        0x0B                                                            // Waveform sequence register 8
+#define DRV2605_REG_RTPIN           0x02                                                            // real-time playback input register
+#define DRV2605_REG_LIBRARY         0x03                                                            // waveform library selection register
+#define DRV2605_REG_WAVESEQ1        0x04                                                            // waveform sequence register 1
+#define DRV2605_REG_WAVESEQ2        0x05                                                            // waveform sequence register 2
+#define DRV2605_REG_WAVESEQ3        0x06                                                            // waveform sequence register 3
+#define DRV2605_REG_WAVESEQ4        0x07                                                            // waveform sequence register 4
+#define DRV2605_REG_WAVESEQ5        0x08                                                            // waveform sequence register 5
+#define DRV2605_REG_WAVESEQ6        0x09                                                            // waveform sequence register 6
+#define DRV2605_REG_WAVESEQ7        0x0A                                                            // waveform sequence register 7
+#define DRV2605_REG_WAVESEQ8        0x0B                                                            // waveform sequence register 8
 
 #define DRV2605_REG_GO              0x0C                                                            // Go register
 #define DRV2605_REG_OVERDRIVE       0x0D                                                            // Overdrive time offset register
@@ -57,10 +72,7 @@
 #define DRV2605_REG_VBAT            0x21                                                            // Vbat voltage-monitor register
 #define DRV2605_REG_LRARESON        0x22                                                            // LRA resonance-period register
 
-/* --------------------------------------------------------------------------------------------- */
-
-/* ========================================== setup() ========================================== */
-/* ---------------------------------------- drv.begin() ---------------------------------------- */
+/* ------------------------------------ Function Prototypes ------------------------------------ */
 /*!
  * @brief   accesses 8-bit register and returns its contents
  * @param   reg         register to read from
@@ -80,15 +92,27 @@ void DRV2605_WriteRegister(uint8_t reg, uint8_t data);
  */
 void DRV2605_Init(void);
 
-/* ------------------------------------ drv.selectLibrary(1) ----------------------------------- */
+/*!
+ * @brief   used to select the waveform effects library
+ * @param   lib         library index
+ */
 void DRV2605_SelectLibrary(uint8_t lib);
 
-/* ----------------------------- drv.setMode(DRV2605_MODE_INTTRIG) ----------------------------- */
+/*!
+ * @brief   sets the functional mode for the haptic motor as described in 7.4.2 of the datasheet
+ *          (https://cdn-shop.adafruit.com/datasheets/DRV2605.pdf)
+ * @param   mode        functional mode
+ */
 void DRV2605_SetMode(uint8_t mode);
 
-/* ========================================== loop() =========================================== */
-/* ------------------------------------- drv.setWaveform() ------------------------------------- */
+/*
+ * @brief   sets the waveform to be played on the haptic motor 
+ * @param   slot        offset for the waveform sequence register
+ * @param   waveform    waveform to be played on the haptic motor
+ */
 void DRV2605_SetWaveform(uint8_t slot, uint8_t waveform);
 
-/* ----------------------------------------- drv.go() ------------------------------------------ */
-void DRV2605_Go();
+/*!
+ * @brief   plays the waveform on the haptic motor
+ */
+void DRV2605_Go(void);
