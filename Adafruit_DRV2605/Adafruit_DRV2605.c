@@ -1,5 +1,5 @@
 /*!
- * @file    Adafruit_DRV2605.h
+ * @file    Adafruit_DRV2605.c
  * @brief   Driver code for the Adafruit DRV2605L Haptic Motor Controller breakout board
  *          as described by its datasheet (https://cdn-shop.adafruit.com/datasheets/DRV2605.pdf)
  * @ref     Initialization sequence and large part of defines taken from Adafruits github
