@@ -458,12 +458,12 @@ void ILI9341_PrintString(cursor_t* cur, char* str);
  * @note    must be run before attempting to do any other transactions at the start of a program
  *
  */
-void ILI9341_InitDisplay(void);
+void ILI9341_Init(void);
 
 /*!
  * @brief   sets up sppech-to-text user interface
  */
-void ILI9341_SetupUserInterface(void);
+void ILI9341_SetupSTTInterface(void);
 
 /*!
  * @brief   sets up settings user interface

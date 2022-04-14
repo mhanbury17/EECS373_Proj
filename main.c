@@ -70,7 +70,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-/* ============================= Global Variables ============================================== */ // global variables begin
+/* ===================================== Global Variables ====================================== */ // global variables begin
 static TSPoint point;
 
 SPI_HandleTypeDef* ILI9341_HSPI_INST = &hspi1;                                                      // hspi instance pointer
@@ -81,7 +81,149 @@ uint16_t ILI9341_CSX_PIN  = GPIO_PIN_4;
 
 GPIO_TypeDef* ILI9341_DCX_PORT = GPIOA;                                                             // dcx pin location
 uint16_t ILI9341_DCX_PIN  = GPIO_PIN_1;
-/* ============================================================================================= */ // global variables end
+
+/* ================================= Function Implementations ================================== */ // global variables end
+void DataHandler(uint8_t* data, cursor_t* cur)
+{
+    HAL_UART_Receive(&huart2, &data[0], 100, 1000);                                                 // receives data from rasberry pi speech recognition
+
+    if (data[0] >= ' ' && data[0] <= 'z')                                                           // checks that string is valid
+    {
+        __disable_irq();
+        ILI9341_PrintString(cur, (char*)data);                                                      // prints string
+        for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                           // clear buffer
+        __enable_irq();
+    }
+    else if (data[0] == '{')
+    {
+        cursor_t arrow_cur = {ILI9341_WIDTH - ILI9341_ARROW_BASE_WIDTH*ILI9341_GetArrowSize() - 10, 4};
+
+        switch ((int)(data[1]))
+        {
+        case 0: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_E, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 1: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 2: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_N, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 3: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 4: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_W, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 5: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 6: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_S, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 7: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        
+        default: /* do nothing */ break;
+        }
+    }
+}
+
+screen_enum Homescreen_TouchHandler(cursor_t* cur)
+{
+    if (STMPE610_TouchedArea(point, 20 + ILI9341_BLOCKM_BASE_WIDTH, 20))                            // if user touches settings icon
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        ILI9341_SetupSettingsInterface();
+        __enable_irq();
+        return SETTINGS;
+    }
+    else if (STMPE610_TouchedArea(point, ILI9341_WIDTH - 5*(ILI9341_FONT_BASE_WIDTH + 1), 20))      // if user touches clear button
+    {
+        __disable_irq();
+        ILI9341_ResetTextBox(cur);
+        STMPE610_ClearPoint(&point);
+        __enable_irq();
+    }
+    return HOMESCREEN;
+}
+
+screen_enum Settings_TouchHandler(void)
+{
+    int changedBrightness = 0;                                                              // boolean var if brightness has been changed
+    
+    if(STMPE610_TouchedArea(point, 171, 202))                                               // If user trying to increase Font Size
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetFontSize() < 8)
+        {
+            ILI9341_SetFontParam(ILI9341_GetFontSize() + 1);
+            ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 1);
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 171, 18))                                           // If user trying to decrease Font Size
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetFontSize() > 1)
+        {
+            ILI9341_SetFontParam(ILI9341_GetFontSize() - 1);
+            ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 0);
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 286, 202))                                          // If user trying to increase arrow Size
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetArrowSize() < 8)
+        {
+            ILI9341_SetArrowParam(ILI9341_GetArrowSize() + 1);
+            ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 1);
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 286, 18))                                           // If user trying to decrease arrow Size
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetArrowSize() > 0)
+        {
+            ILI9341_SetArrowParam(ILI9341_GetArrowSize() - 1);
+            ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 0);
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 56, 202))                                           // If user trying to increase brightness
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetBrightness() < 8)
+        {
+            ILI9341_SetBrightness(ILI9341_GetBrightness() + 1);
+            ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 1);
+            changedBrightness = 1;
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 56, 18))                                            // If user trying to decrease brightness
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if(ILI9341_GetBrightness() > 1)
+        {
+            ILI9341_SetBrightness(ILI9341_GetBrightness() - 1);
+            ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 0);
+            changedBrightness = 1;
+        }
+        __enable_irq();
+    }
+    else if(STMPE610_TouchedArea(point, 20, 220))                                           // If user pressed return
+    {
+        __disable_irq();
+        STMPE610_ClearPoint(&point);
+        if (changedBrightness)
+        {
+            ILI9341_UpdateColor();
+            changedBrightness = 0;
+        }
+        ILI9341_SetupSTTInterface();
+        ILI9341_ResetTextBox(&cur);
+        __enable_irq();
+        return HOMESCREEN;
+    }
+    return SETTINGS;
+}
+
+/* ============================================================================================= */
 /* USER CODE END 0 */
 
 /**
@@ -115,162 +257,41 @@ int main(void)
     MX_TIM2_Init();
     /* USER CODE BEGIN 2 */
     /* ========================================== Setup ======================================== */ // setup begin
-    ILI9341_InitDisplay();
-    ILI9341_SetupUserInterface();
+    /* ----------------------------------- Initialize Devices ---------------------------------- */
+    ILI9341_Init();                                                                                 // initializes the display
+    STMPE610_Init();                                                                                // initializes the touchscreen
+    
+    /* ---------------------------------- Initialize Variables --------------------------------- */
+    cursor_t cur;                                                                                   // initialize text cursor
 
-    cursor_t cur;
-    ILI9341_ResetTextBox(&cur);
-
-    STMPE610_Init();
-    HAL_TIM_Base_Start_IT(&htim2);
-    screen_enum curScreen = HOMESCREEN;
-    STMPE610_ClearPoint(&point);
-
+    HAL_TIM_Base_Start_IT(&htim2);                                                                  // initialize timer for touchscreen
+    STMPE610_ClearPoint(&point);                                                                    // initialize touchscreen point
+    
     uint8_t data[100];                                                                              // read data buffer
     for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                               // clear data buffer
-
-    ILI9341_PrintString(&cur, "Clear this text.");
+    
+    /* ---------------------------------------- Setup UI --------------------------------------- */
+    screen_enum curScreen = HOMESCREEN;                                                             // initialize UI menu
+    ILI9341_SetupSTTInterface();                                                                    // setup speech-to-text interface
+    ILI9341_ResetTextBox(&cur);                                                                     // reset the text box
 
     /* ========================================================================================= */ // setup end
     /* USER CODE END 2 */
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
-    int changedBrightness = 0;
     while (1)
     {
         /* ======================================= Loop ======================================== */ // loop begin
         switch (curScreen)
         {
         case HOMESCREEN:
-            HAL_UART_Receive(&huart2, &data[0], 100, 1000);                                         // receives data from rasberry pi speech recognition
-
-            if (data[0] >= ' ' && data[0] <= 'z')                                                   // checks that string is valid
-            {
-                __disable_irq();
-                ILI9341_PrintString(&cur, (char*)data);                                             // prints string
-                for (uint8_t i = 0; i < 100; ++i) data[i] = '\0';                                   // clear buffer
-                __enable_irq();
-            }
-            else if (data[0] == '{')
-            {
-                cursor_t arrow_cur = {ILI9341_WIDTH - ILI9341_ARROW_BASE_WIDTH*ILI9341_GetArrowSize() - 10, 4};
-
-                switch ((int)(data[1]))
-                {
-                case 0: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_E, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 1: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 2: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_N, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 3: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 4: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_W, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 5: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 6: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_S, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                case 7: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-                
-                default: /* do nothing */ break;
-                }
-            }
-
-            if (STMPE610_TouchedArea(point, 20 + ILI9341_BLOCKM_BASE_WIDTH, 20))
-            {
-                __disable_irq();
-                curScreen = SETTINGS;
-                STMPE610_ClearPoint(&point);
-                ILI9341_SetupSettingsInterface();
-                __enable_irq();
-            }
-            else if (STMPE610_TouchedArea(point, ILI9341_WIDTH - 5*(ILI9341_FONT_BASE_WIDTH + 1), 20))
-            {
-                __disable_irq();
-                ILI9341_ResetTextBox(&cur);
-                STMPE610_ClearPoint(&point);
-                __enable_irq();
-            }
+            DataHandler(data, &cur);
+            curScreen = Homescreen_TouchHandler(&cur);
             break;
 
         case SETTINGS:
-            if(STMPE610_TouchedArea(point, 171, 202))                                               // If user trying to increase Font Size
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetFontSize() < 8)
-                {
-                    ILI9341_SetFontParam(ILI9341_GetFontSize() + 1);
-                    ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 1);
-                }
-                __enable_irq();
-            }
-            else if(STMPE610_TouchedArea(point, 171, 18))                                           // If user trying to decrease Font Size
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetFontSize() > 1)
-                {
-                    ILI9341_SetFontParam(ILI9341_GetFontSize() - 1);
-                    ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 0);
-                }
-                __enable_irq();
-            }
-            if(STMPE610_TouchedArea(point, 286, 202))                                               // If user trying to increase arrow Size
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetArrowSize() < 8)
-                {
-                    ILI9341_SetArrowParam(ILI9341_GetArrowSize() + 1);
-                    ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 1);
-                }
-                __enable_irq();
-            }
-            else if(STMPE610_TouchedArea(point, 286, 18))                                           // If user trying to decrease arrow Size
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetArrowSize() > 0)
-                {
-                    ILI9341_SetArrowParam(ILI9341_GetArrowSize() - 1);
-                    ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 0);
-                }
-                __enable_irq();
-            }
-            if(STMPE610_TouchedArea(point, 56, 202))                                                // If user trying to increase brightness
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetBrightness() < 8)
-                {
-                    ILI9341_SetBrightness(ILI9341_GetBrightness() + 1);
-                    ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 1);
-                    changedBrightness = 1;
-                }
-                __enable_irq();
-            }
-            else if(STMPE610_TouchedArea(point, 56, 18))                                            // If user trying to decrease brightness
-            {
-                __disable_irq();
-                STMPE610_ClearPoint(&point);
-                if(ILI9341_GetBrightness() > 1)
-                {
-                    ILI9341_SetBrightness(ILI9341_GetBrightness() - 1);
-                    ILI9341_AdjustSlider(ILI9341_GetBrightness(), 30, 0);
-                    changedBrightness = 1;
-                }
-                __enable_irq();
-            }
-            else if(STMPE610_TouchedArea(point, 20, 220))                                           // If user pressed return
-            {
-                __disable_irq();
-                curScreen = HOMESCREEN;
-                STMPE610_ClearPoint(&point);
-                if (changedBrightness)
-                {
-                    ILI9341_UpdateColor();
-                    changedBrightness = 0;
-                }
-                ILI9341_SetupUserInterface();
-                ILI9341_ResetTextBox(&cur);
-                __enable_irq();
-            }
+            curScreen = Settings_TouchHandler();
             break;
 
         }

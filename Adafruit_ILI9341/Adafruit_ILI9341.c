@@ -338,7 +338,7 @@ void ILI9341_PrintString(cursor_t* cur, char* str)
  * @note    must be run before attempting to do any other transactions at the start of a program
  *
  */
-void ILI9341_InitDisplay(void)
+void ILI9341_Init(void)
 {
     ILI9341_WriteCommand(ILI9341_SW_RESET);
     HAL_Delay(150);
@@ -362,7 +362,7 @@ void ILI9341_InitDisplay(void)
 /*!
  * @brief   sets up sppech-to-text user interface
  */
-void ILI9341_SetupUserInterface(void)
+void ILI9341_SetupSTTInterface(void)
 {
     ILI9341_FillScreen(clr2);                                                                       // fill background color
 
