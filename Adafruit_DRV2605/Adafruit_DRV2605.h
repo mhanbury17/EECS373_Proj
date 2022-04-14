@@ -2,6 +2,8 @@
  * @file    Adafruit_DRV2605.h
  * @brief   Driver code for the Adafruit DRV2605L Haptic Motor Controller breakout board
  *          as described by its datasheet (https://cdn-shop.adafruit.com/datasheets/DRV2605.pdf)
+ * @ref     Initialization sequence and large part of defines taken from Adafruits github
+ *          repository for this device (https://github.com/adafruit/Adafruit_DRV2605_Library)
  * @note    This code is written with the intention of using I2C to communicate to the
  *          STM32 L4R5ZI-P board and uses the following pinout.
  * 

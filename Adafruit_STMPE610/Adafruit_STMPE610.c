@@ -2,11 +2,13 @@
  * @file    Adafruit_STMPE610.c
  * @brief   Driver code for Adafruit STMPE610 Resistive Touch Screen Controller
  *          (https://www.adafruit.com/product/1571)
+ * @ref     Initialization sequence and large part of defines taken from Adafruits github
+ *          repository for this device (https://github.com/adafruit/Adafruit_STMPE610)
  * @note    This code is written with intention of using I2C to communicate to the
  *          STM32 L031K6 board and uses the following pinout on the resistive touch
  *          controller:
  *
- *          PINOUT  I2C             PORT/PIN
+ *          PINOUT  LABEL           PORT/PIN
  *          --------------------------------
  *          [IN PROGRESS]
  *

@@ -2,6 +2,8 @@
  * @file    Adafruit_ILI9341.c
  * @brief   Driver code for Adafruit ILI9341 TFT LCD with Touchscreen Breakout Board
  *          (https://www.adafruit.com/product/1770)
+ * @ref     Initialization sequence and large part of defines taken from Adafruits github
+ *          repository for this device (https://github.com/adafruit/Adafruit_ILI9341)
  * @note    This code is written with intention of using SPI to communicate to the
  *          STM32 L031K6 board and uses the following pinout on the display:
  *
@@ -12,7 +14,7 @@
  *          MOSI    SPI1_MOSI       PA_7
  *          CS      GPIO_OUTPUT     PA_4
  *          D/C     GPIO_OUTPUT     PA_1
- *
+ *  
  * @author  Miles Hanbury (mhanbury)
  * @author  Joshua Nye (jnye)
  * @author  James Kelley (jkelly)
