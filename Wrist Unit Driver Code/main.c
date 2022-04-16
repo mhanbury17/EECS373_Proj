@@ -100,14 +100,14 @@ void DataHandler(uint8_t* data, cursor_t* cur)
 
         switch ((int)(data[1]))
         {
-        case 0: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_E, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 1: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 2: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_N, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 3: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_NW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 4: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_W, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 5: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 6: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_S, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
-        case 7: ILI9341_PrintArr16(arrow_cur, ILI9341_ARROW_SE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 0: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_E, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 1: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_NE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 2: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_N, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 3: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_NW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 4: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_W, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 5: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_SW, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 6: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_S, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
+        case 7: ILI9341_PrintArr16(&arrow_cur, ILI9341_ARROW_SE, ILI9341_ARROW_BASE_WIDTH, ILI9341_GetArrowSize()); break;
         
         default: /* do nothing */ break;
         }
@@ -134,7 +134,7 @@ screen_enum Homescreen_TouchHandler(cursor_t* cur)
     return HOMESCREEN;
 }
 
-screen_enum Settings_TouchHandler(void)
+screen_enum Settings_TouchHandler(cursor_t* cur)
 {
     int changedBrightness = 0;                                                              // boolean var if brightness has been changed
     
@@ -216,7 +216,7 @@ screen_enum Settings_TouchHandler(void)
             changedBrightness = 0;
         }
         ILI9341_SetupSTTInterface();
-        ILI9341_ResetTextBox(&cur);
+        ILI9341_ResetTextBox(cur);
         __enable_irq();
         return HOMESCREEN;
     }
@@ -291,7 +291,7 @@ int main(void)
             break;
 
         case SETTINGS:
-            curScreen = Settings_TouchHandler();
+            curScreen = Settings_TouchHandler(&cur);
             break;
 
         }
