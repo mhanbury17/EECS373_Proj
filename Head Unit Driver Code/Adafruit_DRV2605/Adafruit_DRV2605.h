@@ -77,44 +77,51 @@
 /* ------------------------------------ Function Prototypes ------------------------------------ */
 /*!
  * @brief   accesses 8-bit register and returns its contents
- * @param   reg         register to read from
- * @return  uint8_t     data contained in register
+ * @param   DRV2605_HI2C_INST   motor I2C instance
+ * @param   reg                 register to read from
+ * @return  uint8_t             data contained in register
  */
-uint8_t DRV2605_ReadRegister(uint8_t reg);
+uint8_t DRV2605_ReadRegister(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t reg);
 
 /*!
  * @brief   accesses 8-bit register and writes content to its address
- * @param   reg         register to write to
- * @param   val         data to write to register
+ * @param   DRV2605_HI2C_INST   motor I2C instance
+ * @param   reg                 register to write to
+ * @param   val                 data to write to register
  */
-void DRV2605_WriteRegister(uint8_t reg, uint8_t data);
+void DRV2605_WriteRegister(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t reg, uint8_t data);
 
 /*!
  * @brief   haptic motor initialization sequence
+ * @param   DRV2605_HI2C_INST   motor I2C instance
  */
-void DRV2605_Init(void);
+void DRV2605_Init(I2C_HandleTypeDef* DRV2605_HI2C_INST);
 
 /*!
  * @brief   used to select the waveform effects library
- * @param   lib         library index
+ * @param   DRV2605_HI2C_INST   motor I2C instance
+ * @param   lib                 library index
  */
-void DRV2605_SelectLibrary(uint8_t lib);
+void DRV2605_SelectLibrary(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t lib);
 
 /*!
  * @brief   sets the functional mode for the haptic motor as described in 7.4.2 of the datasheet
  *          (https://cdn-shop.adafruit.com/datasheets/DRV2605.pdf)
- * @param   mode        functional mode
+ * @param   DRV2605_HI2C_INST   motor I2C instance
+ * @param   mode                functional mode
  */
-void DRV2605_SetMode(uint8_t mode);
+void DRV2605_SetMode(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t mode);
 
-/*
+/*!
  * @brief   sets the waveform to be played on the haptic motor 
- * @param   slot        offset for the waveform sequence register
- * @param   waveform    waveform to be played on the haptic motor
+ * @param   DRV2605_HI2C_INST   motor I2C instance
+ * @param   slot                offset for the waveform sequence register
+ * @param   waveform            waveform to be played on the haptic motor
  */
-void DRV2605_SetWaveform(uint8_t slot, uint8_t waveform);
+void DRV2605_SetWaveform(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t slot, uint8_t waveform);
 
 /*!
  * @brief   plays the waveform on the haptic motor
+ * @param   DRV2605_HI2C_INST   motor I2C instance
  */
-void DRV2605_Go(void);
+void DRV2605_Go(I2C_HandleTypeDef* DRV2605_HI2C_INST);
