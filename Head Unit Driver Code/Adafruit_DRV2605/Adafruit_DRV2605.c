@@ -73,9 +73,9 @@ void DRV2605_Init(I2C_HandleTypeDef* DRV2605_HI2C_INST)
     // ERM open loop
 
     DRV2605_WriteRegister(DRV2605_HI2C_INST, DRV2605_REG_FEEDBACK, 
-        DRV2605_ReadRegister(DRV2605_REG_FEEDBACK) & 0x7F);                                         // turn off N_ERM_LRA
+        DRV2605_ReadRegister(DRV2605_HI2C_INST, DRV2605_REG_FEEDBACK) & 0x7F);                      // turn off N_ERM_LRA
     DRV2605_WriteRegister(DRV2605_HI2C_INST, DRV2605_REG_CONTROL3, 
-        DRV2605_ReadRegister(DRV2605_REG_CONTROL3) | 0x20);                                         // turn on ERM_OPEN_LOOP
+        DRV2605_ReadRegister(DRV2605_HI2C_INST, DRV2605_REG_CONTROL3) | 0x20);                      // turn on ERM_OPEN_LOOP
 }
 
 /*!
