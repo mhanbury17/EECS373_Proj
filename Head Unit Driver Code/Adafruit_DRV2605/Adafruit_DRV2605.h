@@ -98,6 +98,11 @@ void DRV2605_WriteRegister(I2C_HandleTypeDef* DRV2605_HI2C_INST, uint8_t reg, ui
 void DRV2605_Init(I2C_HandleTypeDef* DRV2605_HI2C_INST);
 
 /*!
+ * @brief   initializes all haptic motors, sets their default libraries and modes
+ */
+void DRV2605_Begin(void);
+
+/*!
  * @brief   used to select the waveform effects library
  * @param   DRV2605_HI2C_INST   motor I2C instance
  * @param   lib                 library index

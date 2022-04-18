@@ -25,6 +25,12 @@
 
 #include "Adafruit_DRV2605.h"
 
+/* ------------------------------------- Global Variables -------------------------------------- */
+extern I2C_HandleTypeDef* DRV2605_HI2C_INST1;
+extern I2C_HandleTypeDef* DRV2605_HI2C_INST2;
+extern I2C_HandleTypeDef* DRV2605_HI2C_INST3;
+extern I2C_HandleTypeDef* DRV2605_HI2C_INST4;
+
 /* --------------------------------- Function Implementations ---------------------------------- */
 /*!
  * @brief   accesses 8-bit register and returns its contents
@@ -76,6 +82,27 @@ void DRV2605_Init(I2C_HandleTypeDef* DRV2605_HI2C_INST)
         DRV2605_ReadRegister(DRV2605_HI2C_INST, DRV2605_REG_FEEDBACK) & 0x7F);                      // turn off N_ERM_LRA
     DRV2605_WriteRegister(DRV2605_HI2C_INST, DRV2605_REG_CONTROL3, 
         DRV2605_ReadRegister(DRV2605_HI2C_INST, DRV2605_REG_CONTROL3) | 0x20);                      // turn on ERM_OPEN_LOOP
+}
+
+/*!
+ * @brief   initializes all haptic motors, sets their default libraries and modes
+ */
+void DRV2605_Begin(void)
+{
+    DRV2605_Init(DRV2605_HI2C_INST1);
+    DRV2605_Init(DRV2605_HI2C_INST2);
+    DRV2605_Init(DRV2605_HI2C_INST3);
+    DRV2605_Init(DRV2605_HI2C_INST4);
+
+    DRV2605_SelectLibrary(DRV2605_HI2C_INST1, 1);
+    DRV2605_SelectLibrary(DRV2605_HI2C_INST2, 1);
+    DRV2605_SelectLibrary(DRV2605_HI2C_INST3, 1);
+    DRV2605_SelectLibrary(DRV2605_HI2C_INST4, 1);
+
+    DRV2605_SetMode(DRV2605_HI2C_INST1, DRV2605_MODE_INTTRIG);
+    DRV2605_SetMode(DRV2605_HI2C_INST2, DRV2605_MODE_INTTRIG);
+    DRV2605_SetMode(DRV2605_HI2C_INST3, DRV2605_MODE_INTTRIG);
+    DRV2605_SetMode(DRV2605_HI2C_INST4, DRV2605_MODE_INTTRIG);
 }
 
 /*!

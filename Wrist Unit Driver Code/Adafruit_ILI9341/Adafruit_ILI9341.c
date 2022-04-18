@@ -254,8 +254,8 @@ void ILI9341_PrintChar(cursor_t* cur, char c)
     case '\n':
         if (cur->y + ILI9341_FONT_SIZE*(2*ILI9341_FONT_BASE_HEIGHT + 1)
             > ILI9341_TXTBOX_HEIGHT + ILI9341_TXTBOX_Y)
-            ILI9341_ResetTextBox(cur);                                                              // reset text box when new line overflows
-        else
+            ILI9341_ResetTextBox(cur);                                                              // reset text box when new line overflows 
+        else if (cur->x != ILI9341_TXTBOX_X)
         {
             cur->x  = ILI9341_TXTBOX_X;                                                             // move cursor to new line
             cur->y += ILI9341_FONT_SIZE*(ILI9341_FONT_BASE_HEIGHT + 1);
@@ -322,14 +322,13 @@ void ILI9341_PrintString(cursor_t* cur, char* str)
             ILI9341_PrintChar(cur, ' ');
             wrd_len++;
         }
-        pos += wrd_len;                                                                             // increment position in string
-        wrd_len = 0;                                                                                // reset word length
-
         if(isSplit)
         {
             ILI9341_PrintString(cur, "-\n");                                                        // print continuation character
             isSplit = 0;                                                                            // new line
         }
+        pos += wrd_len;                                                                             // increment position in string
+        wrd_len = 0;                                                                                // reset word length
     }
 
 }
