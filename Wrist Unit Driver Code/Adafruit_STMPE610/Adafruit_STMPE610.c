@@ -10,7 +10,8 @@
  *
  *          PINOUT  LABEL           PORT/PIN
  *          --------------------------------
- *          [IN PROGRESS]
+ *          3v3      -> Vin
+ *          D5       -> SCL
  *
  * @author  Miles Hanbury (mhanbury)
  * @author  Joshua Nye (jnye)
@@ -83,7 +84,8 @@ uint16_t STMPE610_GetVersion(void)
  */
 void STMPE610_Init(void)
 {
-    if(STMPE610_GetVersion() != 0x811) return 0;                                                    // check version = 0x811 to make sure i2c is working
+    if(STMPE610_GetVersion() != 0x811)
+    	return 0;                                                    // check version = 0x811 to make sure i2c is working
 
     STMPE610_WriteRegister8((uint8_t*)STMPE610_SYS_CTRL1, (uint8_t*)STMPE610_SYS_CTRL1_RESET);      // software reset
     HAL_Delay(20);
@@ -145,9 +147,9 @@ TSPoint STMPE610_GetPoint()
  * @param   y           y position on display to check
  * @return  uint8_t     returns true if that area has been touched
  */
-uint8_t STMPE610_TouchedArea(TSPoint point, int16_t x, int16_t y)
+uint8_t STMPE610_TouchedArea(TSPoint* point, int16_t x, int16_t y)
 {
-    if(x > (point.x - 20) && x < (point.x + 20) && y > (point.y - 20) && y < (point.y + 20))
+    if(x > (point->x - 20) && x < (point->x + 20) && y > (point->y - 20) && y < (point->y + 20))
     {
         return 1;
     }

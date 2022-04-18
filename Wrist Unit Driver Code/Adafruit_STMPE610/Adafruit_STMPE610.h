@@ -203,7 +203,7 @@ TSPoint STMPE610_GetPoint();
  * @param   y           y position on display to check
  * @return  uint8_t     returns true if that area has been touched
  */
-uint8_t STMPE610_TouchedArea(TSPoint point, int16_t x, int16_t y);
+uint8_t STMPE610_TouchedArea(TSPoint* point, int16_t x, int16_t y);
 
 /*!
  * @brief   reset the point

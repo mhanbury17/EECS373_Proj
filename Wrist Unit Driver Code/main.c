@@ -75,7 +75,7 @@ GPIO_TypeDef* ILI9341_DCX_PORT = GPIOA;                                         
 uint16_t ILI9341_DCX_PIN  = GPIO_PIN_1;
 
 cursor_t cur;
-
+int changedBrightness;                                                              				// boolean var if brightness has been changed
 uint8_t size[2];
 screen_enum curScreen = HOMESCREEN;                                                             	// initialize UI menu
 
@@ -148,19 +148,19 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   /* ========================================== Setup ======================================== */ // setup begin
-  HAL_UART_Receive_IT(&huart2, size, 2);
-
-
   /* ----------------------------------- Initialize Devices ---------------------------------- */
   ILI9341_Init();                                                                                 // initializes the display
   STMPE610_Init();                                                                                // initializes the touchscreen
 
   /* ---------------------------------- Initialize Variables --------------------------------- */
-  HAL_TIM_Base_Start_IT(&htim2);                                                                  // initialize timer for touchscreen
-
+  changedBrightness = 0;
   /* ---------------------------------------- Setup UI --------------------------------------- */
   ILI9341_SetupSTTInterface();                                                                    // setup speech-to-text interface
   ILI9341_ResetTextBox(&cur);                                                                     // reset the text box
+
+  /* -------------------------------------- Interrupts --------------------------------------- */
+  HAL_UART_Receive_IT(&huart2, size, 2);
+  HAL_TIM_Base_Start_IT(&htim2);                                                                  // initialize timer for touchscreen
 
   /* ========================================================================================= */ // setup end
   /* USER CODE END 2 */
@@ -427,39 +427,35 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     switch (curScreen)
 	{
 	case HOMESCREEN:
-		if (STMPE610_TouchedArea(point, 20 + ILI9341_BLOCKM_BASE_WIDTH, 20))                            // if user touches settings icon
+		if (STMPE610_TouchedArea(&point, ILI9341_BLOCKM_BASE_WIDTH, 0))                              // if user touches settings icon
 		{
 			ILI9341_SetupSettingsInterface();
 			curScreen = SETTINGS;
 		}
-		else if (STMPE610_TouchedArea(point, ILI9341_WIDTH - 5*(ILI9341_FONT_BASE_WIDTH + 1), 20))      // if user touches clear button
+		else if (STMPE610_TouchedArea(&point, ILI9341_WIDTH - 5*(ILI9341_FONT_BASE_WIDTH + 1), 20))  // if user touches clear button
 		{
 			ILI9341_ResetTextBox(&cur);
 		}
 		break;
 
 	case SETTINGS:;
-			int changedBrightness = 0;                                                              // boolean var if brightness has been changed
-
-		    if(STMPE610_TouchedArea(point, 171, 202))                                               // If user trying to increase Font Size
+		    if(STMPE610_TouchedArea(&point, 171, 202))                                               // If user trying to increase Font Size
 		    {
-		        if(ILI9341_GetFontSize() < 4)
+		        if(ILI9341_GetFontSize() < 8)
 		        {
 		            ILI9341_SetFontParam(ILI9341_GetFontSize() + 1);
 		            ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 1);
-                    ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 1);
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 171, 18))                                           // If user trying to decrease Font Size
+		    else if(STMPE610_TouchedArea(&point, 171, 18))                                           // If user trying to decrease Font Size
 		    {
 		        if(ILI9341_GetFontSize() > 1)
 		        {
 		            ILI9341_SetFontParam(ILI9341_GetFontSize() - 1);
 		            ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 0);
-                    ILI9341_AdjustSlider(ILI9341_GetFontSize(), 145, 0);
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 286, 202))                                          // If user trying to increase arrow Size
+		    else if(STMPE610_TouchedArea(&point, 286, 202))                                          // If user trying to increase arrow Size
 		    {
 		        if(ILI9341_GetArrowSize() < 8)
 		        {
@@ -467,7 +463,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		            ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 1);
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 286, 18))                                           // If user trying to decrease arrow Size
+		    else if(STMPE610_TouchedArea(&point, 286, 18))                                           // If user trying to decrease arrow Size
 		    {
 		        if(ILI9341_GetArrowSize() > 0)
 		        {
@@ -475,7 +471,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		            ILI9341_AdjustSlider(ILI9341_GetArrowSize(), 260, 0);
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 56, 202))                                           // If user trying to increase brightness
+		    else if(STMPE610_TouchedArea(&point, 56, 202))                                           // If user trying to increase brightness
 		    {
 		        if(ILI9341_GetBrightness() < 8)
 		        {
@@ -484,7 +480,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		            changedBrightness = 1;
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 56, 18))                                            // If user trying to decrease brightness
+		    else if(STMPE610_TouchedArea(&point, 56, 18))                                            // If user trying to decrease brightness
 		    {
 		        if(ILI9341_GetBrightness() > 1)
 		        {
@@ -493,7 +489,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		            changedBrightness = 1;
 		        }
 		    }
-		    else if(STMPE610_TouchedArea(point, 20, 220))                                           // If user pressed return
+		    else if(STMPE610_TouchedArea(&point, 0, 220))                                           // If user pressed return
 		    {
 		        if (changedBrightness)
 		        {

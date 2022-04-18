@@ -254,7 +254,7 @@ void ILI9341_PrintChar(cursor_t* cur, char c)
     case '\n':
         if (cur->y + ILI9341_FONT_SIZE*(2*ILI9341_FONT_BASE_HEIGHT + 1)
             > ILI9341_TXTBOX_HEIGHT + ILI9341_TXTBOX_Y)
-            ILI9341_ResetTextBox(cur);                                                              // reset text box when new line overflows 
+            ILI9341_ResetTextBox(cur);                                                              // reset text box when new line overflows
         else if (cur->x != ILI9341_TXTBOX_X)
         {
             cur->x  = ILI9341_TXTBOX_X;                                                             // move cursor to new line
@@ -353,11 +353,12 @@ void ILI9341_Init(void)
             ILI9341_WriteData(*(ILI9341_InitCMDs + cmd_idx++));
     }
 
-    ILI9341_ARROW_SIZE = 1;                                                                         // set default arrow size
-    ILI9341_FONT_SIZE  = 1;                                                                         // set default font size
+    ILI9341_ARROW_SIZE = 4;                                                                         // set default arrow size
+    ILI9341_FONT_SIZE  = 2;                                                                         // set default font size
     ILI9341_BRIGHTNESS = 8;                                                                         // set default brightness
     clr1 = 0x0000;
     clr2 = 0xFFFF;
+    clrt = 0xFFFF;
 }
 
 /*!
