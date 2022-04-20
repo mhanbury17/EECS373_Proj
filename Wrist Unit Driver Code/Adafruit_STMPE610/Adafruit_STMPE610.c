@@ -14,8 +14,8 @@
  *          D5       -> SCL
  *
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (jnye)
- * @author  James Kelley (jkelly)
+ * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 #include "Adafruit_STMPE610.h"
