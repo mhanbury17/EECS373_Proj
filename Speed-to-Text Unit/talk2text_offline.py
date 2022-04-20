@@ -1,3 +1,11 @@
+# Python Script for Offline Speech Recognition
+#
+#
+#
+#  @author  Miles Hanbury (mhanbury)
+#  @author  James Kelly (jkellymi)
+#  @author  Joshua Nye (nyej)
+
 import speech_recognition as sr
 r = sr.Recognizer()
 mic = sr.Microphone()
