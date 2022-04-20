@@ -2,7 +2,9 @@
  * main.cxx
  * 
  * C++ Driver Program to Call Python Talk-2-Text Script
- * 
+ * @author  Miles Hanbury (mhanbury)
+ * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 //g++ -Wall -o  "%e" "%f" -pthread $(python-config --includes --cflags --ldflags) >outfile.txt
