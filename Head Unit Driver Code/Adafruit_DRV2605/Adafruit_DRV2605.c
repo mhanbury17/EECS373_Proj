@@ -19,8 +19,8 @@
  *          SDA     I2C4_SDA        PF15
  *
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (jnye)
  * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 #include "Adafruit_DRV2605.h"
