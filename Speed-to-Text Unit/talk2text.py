@@ -1,3 +1,11 @@
+#Python Script for Speech Recognition via Google
+#
+#
+#
+#  @author  Miles Hanbury (mhanbury)
+#  @author  James Kelly (jkellymi)
+#  @author  Joshua Nye (nyej)
+
 import sys
 
 
