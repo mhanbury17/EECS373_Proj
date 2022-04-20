@@ -20,7 +20,7 @@
  *
  * @author  Miles Hanbury (mhanbury)
  * @author  Joshua Nye (jnye)
- * @author  James Kelley (jkelly)
+ * @author  James Kelly (jkellymi)
  */
 
 #include "Adafruit_DRV2605.h"
