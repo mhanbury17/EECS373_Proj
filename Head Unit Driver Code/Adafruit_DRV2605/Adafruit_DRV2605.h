@@ -19,8 +19,8 @@
  *          SDA     I2C4_SDA        PF15
  *
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (nyej)
  * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 #include "stm32l4xx_hal.h"
