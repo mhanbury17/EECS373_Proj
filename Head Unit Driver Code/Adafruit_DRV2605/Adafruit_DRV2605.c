@@ -9,14 +9,14 @@
  * 
  *          PINOUT  LABEL           PORT/PIN
  *          --------------------------------
- *          SCL     I2C1_SCL        PB_8
- *          SDA     I2C1_SDA        PB_9
- *          SCL     I2C2_SCL        PB_10
- *          SDA     I2C2_SDA        PB_11
- *          SCL     I2C3_SCL        PA_7
- *          SDA     I2C3_SDA        PB_4
- *          SCL     I2C4_SCL        PF_14
- *          SDA     I2C4_SDA        PF_15
+ *          SCL     I2C1_SCL        PB8
+ *          SDA     I2C1_SDA        PB9
+ *          SCL     I2C2_SCL        PB10
+ *          SDA     I2C2_SDA        PB11
+ *          SCL     I2C3_SCL        PA7
+ *          SDA     I2C3_SDA        PB4
+ *          SCL     I2C4_SCL        PF14
+ *          SDA     I2C4_SDA        PF15
  *
  * @author  Miles Hanbury (mhanbury)
  * @author  Joshua Nye (jnye)

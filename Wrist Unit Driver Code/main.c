@@ -65,6 +65,7 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/* ===================================== USART Handler Code ==================================== */
 SPI_HandleTypeDef* ILI9341_HSPI_INST = &hspi1;                                                      // hspi instance pointer
 I2C_HandleTypeDef* STMPE610_HI2C_INST = &hi2c1;
 
@@ -81,15 +82,14 @@ screen_enum curScreen = HOMESCREEN;                                             
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef* huart)
 {
-	uint16_t temp = (uint16_t)((size[1] << 8) + size[0]);
-	uint8_t buffer[(uint16_t)((size[1] << 8) + size[0])];
-	HAL_UART_Receive(&huart2, buffer, (uint16_t)((size[1] << 8) + size[0]), HAL_MAX_DELAY);
-	buffer[(uint16_t)((size[1] << 8) + size[0])] = '\0';
-	HAL_UART_Receive_IT(&huart2, size, 2);
-	if(curScreen != HOMESCREEN) return;
+	uint8_t buffer[(uint16_t)((size[1] << 8) + size[0]) + 1];                                       // set buffer size
+	HAL_UART_Receive(&huart2, buffer, (uint16_t)((size[1] << 8) + size[0]), HAL_MAX_DELAY);         // fill buffer
+	buffer[(uint16_t)((size[1] << 8) + size[0])] = '\0';                                            // set last value of buffer to null terminator
+	HAL_UART_Receive_IT(&huart2, size, 2);                                                          // prepare to recieve next message
+	if(curScreen != HOMESCREEN) return;                                                             // only print if on homescreen
 
-	if (buffer[0] <= 8 && buffer[0] >= 1) ArrowHandler(buffer[0]);
-	else if (buffer[0] >= 32 && buffer[0] <= 122) ILI9341_PrintString(&cur, (char*)buffer);
+	if (buffer[0] <= 8 && buffer[0] >= 1) ArrowHandler(buffer[0]);                                  // print arrow if numeric
+	else if (buffer[0] >= 32 && buffer[0] <= 122) ILI9341_PrintString(&cur, (char*)buffer);         // print text otherwise
 }
 
 void ArrowHandler(uint8_t idx)
@@ -111,7 +111,7 @@ void ArrowHandler(uint8_t idx)
 	}
 }
 
-
+/* ============================================================================================= */
 /* USER CODE END 0 */
 
 /**
@@ -154,6 +154,7 @@ int main(void)
 
   /* ---------------------------------- Initialize Variables --------------------------------- */
   changedBrightness = 0;
+
   /* ---------------------------------------- Setup UI --------------------------------------- */
   ILI9341_SetupSTTInterface();                                                                    // setup speech-to-text interface
   ILI9341_ResetTextBox(&cur);                                                                     // reset the text box
@@ -417,7 +418,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-/* ===================================== Interrupt Handler ===================================== */
+/* =============================== Touchscreen Interrupt Handler =============================== */
 // Callback: timer has rolled over
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
