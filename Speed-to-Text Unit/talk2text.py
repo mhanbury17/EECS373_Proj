@@ -1,4 +1,4 @@
-#Python Script for Speech Recognition via Google
+# Python Script for Speech Recognition via Google
 #
 #
 #
