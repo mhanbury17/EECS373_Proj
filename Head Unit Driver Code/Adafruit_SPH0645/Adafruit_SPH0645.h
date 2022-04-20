@@ -20,8 +20,8 @@
  *          SAI2_SD_B   --              PG5
  *
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (jnye)
- * @author  James Kelley (jkelly)
+ * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 #include "stm32l4xx_hal.h"
