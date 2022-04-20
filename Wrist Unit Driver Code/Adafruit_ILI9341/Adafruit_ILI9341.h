@@ -16,8 +16,8 @@
  *          D/C     GPIO_OUTPUT     PA_1
  *  
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (jnye)
- * @author  James Kelley (jkelly)
+ * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 /* ----------------------------------------- Includes ------------------------------------------ */
