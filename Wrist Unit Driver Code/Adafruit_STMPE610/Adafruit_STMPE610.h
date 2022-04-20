@@ -13,8 +13,8 @@
  *          [IN PROGRESS]
  *
  * @author  Miles Hanbury (mhanbury)
- * @author  Joshua Nye (jnye)
- * @author  James Kelley (jkelly)
+ * @author  James Kelly (jkellymi)
+ * @author  Joshua Nye (nyej)
  */
 
 #include "stm32l0xx_hal.h"
